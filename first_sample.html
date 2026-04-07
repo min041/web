@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>나의 자기소개 페이지</title>
+<style>
+    /* 박스 모델 초기화 (패딩과 테두리를 너비에 포함) */
+    * { box-sizing: border-box; }
+    /*
+    *:not(body, html):hover { scale: 1.1; }
+    *:not(body, html) {
+        transition: scale 0.5s ease;
+    }
+    */
+    
+    html, body { margin: 0; padding: 0; height: 100%; font-family: 'Malgun Gothic', sans-serif; }
+    
+    /* 레이아웃 스타일 */
+    header { width: 100%; height: 15%; background: #b0dc92; 
+             display: flex; align-items: center; justify-content: center; }
+    nav { width: 15%; height: 70%; float: left; background:  #6b854d; padding: 20px; }
+    section { width: 70%; height: 70%; float: left; background: #8ba063; 
+              padding: 30px; color: rgb(241, 240, 240); overflow-y: auto; }
+    aside { width: 15%; height: 70%; float: left; background: #6b854d; padding: 20px; }
+    footer { width: 100%; height: 15%; clear: both; background: #9fa4c0; 
+             display: flex; align-items: center; justify-content: center; }
+
+    /* 내부 요소 스타일링 */
+    ul { list-style-type: none; padding: 0; }
+    li { margin-bottom: 10px; }
+    a { text-decoration: none; color: black; font-weight: bold; }
+    a:hover { color: white; }
+
+    
+    .comment {
+        background: #7c9e52;
+        font-size: 30px;
+    }
+</style>
+</head>
+<body>
+    <header>
+        <h1>안녕하세요, 표민서의 포트폴리오입니다!</h1>
+    </header>
+
+    <nav>
+        <h3>메뉴</h3>
+        <ul>
+            <li><a href="#">홈</a></li>
+            <li><a href="https://n.news.naver.com/mnews/article/092/0002416989?sid=105">소개(네이버뉴스)</a></li>
+            <li><a href="#">프로젝트</a></li>
+            <li><a href="#guestbookTitle">댓글</a></li>
+        </ul>
+    </nav>
+
+    <section>
+        <h2>나를 소개합니다</h2>
+        <p>안녕하세요! 코딩의 세계에 첫 발을 내딛은 <strong>웹 개발 입문자</strong>입니다.</p>
+        <hr>
+        <h3>나의 목표</h3>
+        <ol>
+            <li>HTML/CSS 마스터하기</li>
+            <li>멋진 나만의 웹사이트 만들기</li>
+            <li>매일 한 시간씩 코딩 공부하기</li>
+        </ol>
+        <h3>관심 분야</h3>
+        <p>저는 프론트엔드 디자인과 사용자 경험(UX)에 관심이 많습니다.</p>
+        <br>
+        <br>
+        <hr>
+        <hr>
+        <h3 id="guestbookTitle">방명록</h3>
+        <ul>
+            <li class="comment"><strong>박세희:</strong> 킨더조이 먹엉!!</li>
+            <li class="comment"><strong>김인경:</strong> 우리 오늘 커플룩~</li>
+            <li class="comment"><strong>박민수:</strong> 배경색이 눈에 확 들어와요.</li>
+            <li class="comment"><strong>최유리:</strong> 앞으로의 성장이 기대됩니다!</li>
+        </ul>
+    </section>
+
+    <aside>
+        <h3>TMI 정보</h3>
+        <p>🍎 좋아하는 과일: 사과</p>
+        <p>☕ 취미: 카페 탐방</p>
+    </aside>
+
+    <footer>
+        <p>Copyright © 2026 홍길동. All rights reserved.</p>
+    </footer>
+</body>
+
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 10ms(0.01초) 뒤에 배경을 검게 바꿈
+        setTimeout(() => {
+            const li = document.querySelector('li');
+            
+            if (li) { // li 요소가 실제로 있을 때만 실행
+                li.style.transition = 'background 0.5s'; // 천천히 변하게 추가
+                li.style.background = 'black';
+            }
+        }, 2000); 
+    });
+
+    document.querySelector('#guestbookTitle').addEventListener('click', ()=> {
+        alert("방명록 준비중!")
+    })
+
+
+</script> -->
+</html>
