@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>나의 자기소개 페이지</title>
+<style>
+    /* 박스 모델 초기화 (패딩과 테두리를 너비에 포함) */
+    * { box-sizing: border-box; }
+    /*
+    *:not(body, html):hover { scale: 1.1; }
+    *:not(body, html) {
+        transition: scale 0.5s ease;
+    }
+    */
+    
+    html, body { margin: 0; padding: 0; height: 100%; font-family: 'Malgun Gothic', sans-serif; }
+    
+    /* 레이아웃 스타일 */
+    header { width: 100%; height: 15%; background: #b0dc92; 
+             display: flex; align-items: center; justify-content: center; }
+    nav { width: 15%; height: 70%; float: left; background:  #6b854d; padding: 20px; }
+    section { width: 70%; height: 70%; float: left; background: #8ba063; 
+              padding: 30px; color: rgb(241, 240, 240); overflow-y: auto; }
+    aside { width: 15%; height: 70%; float: left; background: #6b854d; padding: 20px; }
+    footer { width: 100%; height: 15%; clear: both; background: #9fa4c0; 
+             display: flex; align-items: center; justify-content: center; }
+
+    /* 내부 요소 스타일링 */
+    ul { list-style-type: none; padding: 0; }
+    li { margin-bottom: 10px; }
+    a { text-decoration: none; color: black; font-weight: bold; }
+    a:hover { color: white; }
+
+    
+    .comment {
+        background: #7c9e52;
+        font-size: 30px;
+    }
+</style>
+</head>
+<body>
+    <header>
+        <h1>안녕하세요, 표민서의 포트폴리오입니다!</h1>
+    </header>
+
+    <nav>
+        <h3>메뉴</h3>
+        <ul>
+            <li><a href="#">홈</a></li>
+            <li><a href="https://n.news.naver.com/mnews/article/092/0002416989?sid=105">소개(네이버뉴스)</a></li>
+            <li><a href="#">프로젝트</a></li>
+            <li><a href="#guestbookTitle">댓글</a></li>
+        </ul>
+    </nav>
+
+    <section>
+        <h2>나를 소개합니다</h2>
+        <p>안녕하세요! 코딩의 세계에 첫 발을 내딛은 <strong>웹 개발 입문자</strong>입니다.</p>
+        <hr>
+        <h3>나의 목표</h3>
+        <ol>
+            <li>HTML/CSS 마스터하기</li>
+            <li>멋진 나만의 웹사이트 만들기</li>
+            <li>매일 한 시간씩 코딩 공부하기</li>
+        </ol>
+        <h3>관심 분야</h3>
+        <p>저는 프론트엔드 디자인과 사용자 경험(UX)에 관심이 많습니다.</p>
+        <br>
+        <br>
+        <hr>
+        <hr>
+        <h3 id="guestbookTitle">방명록</h3>
+        <form action=""> 
+            <label for="nick">닉네임</label>
+            <input id="nick" name="nick" type="text"> 
+            <label for="content">내용</label>
+            <input id="content" name="content" type="text"> 
+            <button type="submit">내용작성</button>
+        </form>
+        <ul id="comments">
+            <li class="comment"><strong>박세희:</strong> @*@</li>
+            <li class="comment"><strong>김인경:</strong> 우리 오늘 커플룩~</li>
+            <li class="comment"><strong>박민수:</strong> 배경색이 눈에 확 들어와요.</li>
+            <li class="comment"><strong>최유리:</strong> 앞으로의 성장이 기대됩니다!</li>
+        </ul>
+    </section>
+
+    <aside>
+        <h3>TMI 정보</h3>
+        <p>🍎 좋아하는 과일: 사과</p>
+        <p>☕ 취미: 카페 탐방</p>
+    </aside>
+
+    <footer>
+        <p>Copyright © 2026 홍길동. All rights reserved.</p>
+    </footer>
+</body>
+
+<!-- 슈파베이스 라이브러리를 CDN 방식으로 가져옵니다. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    //  슈바베이스 주소와 인증 정보를 입력합니다. 아래 키는 누구나 접속해도 되는 키입니다. 실제로는 보안에 유의해야 합니다.
+    const SUPABASE_URL = "https://yooggvegmnftbppkaeth.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlvb2dndmVnbW5mdGJwcGthZXRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MDYzMjQsImV4cCI6MjA4ODk4MjMyNH0.m50HsLodxK467-XhGTqNTKdEJbEXttElSkZrMmbDyes";
+    // 아래 스키마만 본인 스키마로 바꾸세요.
+    const GUESTBOOK_SCHEMA = "pums";
+    const GUESTBOOK_TABLE = "guestbook";
+
+    // 슈파베이스와 연결할 객체를 생성합니다.
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // dom을 조작해서 폼, 인풋박스, 댓글칸 객체를 변수에 할당합니다.
+    const form = document.querySelector("form");
+    const nameInput = document.getElementById("nick");
+    const contentInput = document.getElementById("content");
+    const list = document.getElementById("comments");
+
+    // 특정 디비 테이블을 지정합니다.
+    function table() {
+        return supabaseClient.schema(GUESTBOOK_SCHEMA).from(GUESTBOOK_TABLE);
+    }
+
+    // 댓글 불러오기
+    // async는 비동기 입니다. 이 함수를 실행하면 오래 걸릴 수 있는데 비동기로 블러킹(다음으로 진행 못 하게 막힘)을 해소합니다.
+    async function loadComments() {
+        // sql과 비슷합니다. 다음 SQL 문장을 프로그래밍 언어로 표현했다고 보면 됩니다.
+        // SELECT * FROM [디비스키마명].[테이블명] ORDER BY created_at;
+        const { data } = await table()
+        .select("*")
+        .order("created_at", { ascending: false });
+
+        // 리스트 태그 안에 가져온 데이터를 dom으로 넣습니다.
+        list.innerHTML = data.map(item => `
+        <li class="comment">
+            <strong>${item.nickname}:</strong> ${item.content}
+        </li>
+        `).join("");
+    }
+
+    // 댓글 추가
+    async function addComment(e) {
+        // 파라매터 e는 이벤트 정보를 담은 객체입니다.
+        // 폼은 기본적으로 post를 날리고 페이지를 새로고침합니다.
+        // 그것을 원하는게 아니니 아무런 이벤트도 실행하지 말라고 막아줍니다.
+        e.preventDefault();
+
+        // 인풋박스에 넣어던 값을 가져옵니다.
+        const nickname = nameInput.value;
+        const content = contentInput.value;
+
+        // 디비에 다음 쿼리(요청)을 합니다.
+        // INSERT INTO [디비스키마명].[테이블명] (nickname, content) VALUES ([nickname], [content]);
+        await table().insert([
+        { nickname, content }
+        ]);
+
+        // 댓글을 다 작성했으니 댓글창 내용 초기화 합니다.
+        form.reset();
+
+        // 댓글 목록을 새로 가져옵니다.
+        loadComments();
+    }
+
+
+    // 폼 태그에서 제출 버튼을 누르면 폼 객체는 summit이라는 이벤트를 호출 받게 됩니다.
+    // 아래는 submit이라는 이벤트가 호출되었을 떄 실행될 콜백(함수를 호출) 로직을 추가하는 겁니다.
+    // addComment 라는 함수를 추가하고 있습니다.
+    form.addEventListener("submit", addComment);
+
+    // 최초 실행(브라우저가 이 파일을 읽을 때 읽자마자 바로 한번 실행합니다.)
+    loadComments();
+</script>
+</html>
+
+
+<script>
+    document.querySelector('form').addEventListener('submit', (e) => {
+        e.preventDefault(); // 페이지 새로고침 방지, (.이 있으면 클래스 선택, # 아이디선택, 아무것도 없으면 태그선택)
+
+        const formData = new FormData(e.target); //이벤트가 발생한걸 타겟 e > event
+        const nick = formData.get('nick');
+        const content = formData.get('content');
+
+        // alert(`닉네임: ${nick}\n내용: ${content}`);
+        comList = document.querySelector('#comments')//ul 태그를 선택함
+
+        const newComment = document.createElement('li');
+        newComment.className = 'comment';
+        newComment.innerHTML = `<strong>${nick}:</strong> ${content}`;
+
+        // comList.append(newComment); ul 태그안에 new~ 넣겠다
+        comList.prepend(newComment);
+
+        // 4. 입력창 초기화
+        e.target.reset();
+    });
+</script>
+
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 10ms(0.01초) 뒤에 배경을 검게 바꿈
+        setTimeout(() => {
+            const li = document.querySelector('li');
+            
+            if (li) { // li 요소가 실제로 있을 때만 실행
+                li.style.transition = 'background 0.5s'; // 천천히 변하게 추가
+                li.style.background = 'black';
+            }
+        }, 2000); 
+    });
+
+    document.querySelector('#guestbookTitle').addEventListener('click', ()=> {
+        alert("방명록 준비중!")
+    })
+
+
+</script> -->
+ </html>
+
+
